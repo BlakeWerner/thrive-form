@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <link href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Text+Display+Bold&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Wix Madefor Text Display Bold', sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 2rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+  
+      .form-container {
+        background-color: white;
+        padding: 2.5rem 2rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 600px;
+      }
+  
+      .form-container h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        font-size: 24px;
+      }
+  
+      .form-container label {
+        font-size: 15px;
+        font-weight: bold;
+        margin-bottom: 0.25rem;
+        display: block;
+      }
+  
+      .required {
+        color: red;
+        margin-left: 4px;
+      }
+  
+      .form-group {
+        margin-bottom: 1.25rem;
+      }
+  
+      .form-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+  
+      .form-row .form-group {
+        flex: 1;
+        min-width: 200px;
+      }
+  
+      .form-container input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-family: 'Wix Madefor Text Display Bold', sans-serif;
+        font-size: 15px;
+      }
+  
+      .form-container input::placeholder {
+        color: #999;
+      }
+  
+      .small-text {
+        font-size: 13px;
+        color: #555;
+        margin-top: -0.75rem;
+        margin-bottom: 1.25rem;
+      }
+  
+      .form-container button {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: #18BC9C;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+  
+      .form-container button:hover {
+        background-color: #1ABC9C;
+      }
+  
+      .text-center {
+        text-align: center;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="form-container">
+      <h2>Client Signup</h2>
+  
+      <form id="signup-form">
+        <div class="form-group">
+          <label for="email">Email<span class="required">*</span></label>
+          <input type="email" id="email" name="email" required placeholder="Enter your email">
+        </div>
+  
+        <div class="form-group">
+          <label for="phone">Phone Number<span class="required">*</span></label>
+          <input type="tel" id="phone" name="phone" required placeholder="123-456-7890" pattern="\d{3}-\d{3}-\d{4}">
+        </div>
+  
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Password<span class="required">*</span></label>
+            <input type="password" id="password" name="password" required placeholder="Enter a password">
+          </div>
+  
+          <div class="form-group">
+            <label for="confirm_password">Confirm Password<span class="required">*</span></label>
+            <input type="password" id="confirm_password" required placeholder="Confirm your password">
+          </div>
+        </div>
+  
+        <div class="small-text">Password should be at least 8 characters and include a letter and number</div>
+  
+        <div class="form-row">
+          <div class="form-group">
+            <label for="first_name">First Name<span class="required">*</span></label>
+            <input type="text" id="first_name" name="first_name" required placeholder="Enter your first name">
+          </div>
+  
+          <div class="form-group">
+            <label for="last_name">Last Name<span class="required">*</span></label>
+            <input type="text" id="last_name" name="last_name" required placeholder="Enter your last name">
+          </div>
+        </div>
+  
+        <div class="text-center">
+          <div class="g-recaptcha" data-sitekey="6LdyXRgUAAAAADUNhMVKJDXiRr6DUN8TGOgllqbt"></div>
+          <div id="captcha-error" style="color: red; font-size: 14px;"></div>
+        </div>
+  
+        <button type="submit">Sign Up</button>
+      </form>
+    </div>
+  
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+      // Format phone input to 123-456-7890
+      $('#phone').on('input', function () {
+        let value = $(this).val().replace(/\D/g, '');
+        if (value.length > 3 && value.length <= 6)
+          value = value.replace(/(\d{3})(\d+)/, '$1-$2');
+        else if (value.length > 6)
+          value = value.replace(/(\d{3})(\d{3})(\d+)/, '$1-$2-$3');
+        $(this).val(value);
+      });
+  
+      $('#signup-form').submit(function (e) {
+        e.preventDefault();
+  
+        const captcha = grecaptcha.getResponse();
+        if (!captcha) {
+          $('#captcha-error').text("Please complete the captcha.");
+          return;
+        }
+  
+        const pw = $('#password').val();
+        const cpw = $('#confirm_password').val();
+        const phone = $('#phone').val();
+        const email = $('#email').val();
+        const firstName = $('#first_name').val().trim();
+        const lastName = $('#last_name').val().trim();
+  
+        if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(pw)) {
+          alert("Password must be at least 8 characters and include a letter and number.");
+          return;
+        }
+  
+        if (pw !== cpw) {
+          alert("Passwords do not match.");
+          return;
+        }
+  
+        if (!/^\d{3}-\d{3}-\d{4}$/.test(phone)) {
+          alert("Phone number must be in format 123-456-7890.");
+          return;
+        }
+  
+        const data = {
+          client_name: firstName + " " + lastName,
+          service_recipient_name: firstName + " (Student)",
+          client_email: email,
+          client_phone: phone,
+          grecaptcha_response: captcha,
+          attributes: {
+            signup_form_type: 'web'
+          }
+        };
+  
+        $.ajax({
+          type: 'POST',
+          url: 'https://socket.tutorcruncher.com/9c79f14df986a1ec693c/enquiry',
+          data: JSON.stringify(data),
+          contentType: 'application/json',
+          dataType: 'json',
+          success: function () {
+            $('#signup-form').html('<h3>Form successfully submitted!</h3>');
+          },
+          error: function (xhr) {
+            alert("Submission failed. Please try again.");
+            console.error(xhr.responseText);
+          }
+        });
+      });
+    </script>
+  </body>
+  
+  <!-- Then -->
+  <script>
+   socket('92f8c11edd8397fec768', {
+     mode: 'enquiry',
+     element: '#socket-enquiry'
+   });
+  </script>
+</html>
